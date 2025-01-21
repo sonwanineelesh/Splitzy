@@ -1,0 +1,13 @@
+package com.splitwise.api;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
+
+public class ExpenseAPI {
+
+	@RestController
+	@CrossOrigin
+	@Validated
+	
+}
