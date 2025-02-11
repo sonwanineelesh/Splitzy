@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.splitwise.DTO.GroupsDTO;
 import com.splitwise.entity.Groups;
-import com.splitwise.entity.User;
+import com.splitwise.entity.Splitwise;
 import com.splitwise.repository.GroupRepository;
 import com.splitwise.repository.UserRepository;
 
@@ -50,15 +50,31 @@ public class GroupServiceImpl implements GroupService{
         for(String email1 : groupDto.getGroupMembers()) {
         	emails.add(email1);
         }
-        Set<User> users = emails.stream()
+        Set<Splitwise> splitwises = emails.stream()
         	    .map(email -> userRepository.findByEmail(email))
         	    .flatMap(Optional::stream) 
         	    .collect(Collectors.toSet());
         
         group.setGroupName(groupDto.getGroupName());
-        group.setGroupMembers(users);
+        group.setGroupMembers(splitwises);
         groupRepository.save(group);
 		return "Group created successfully and members also added";
+	}
+
+	@Override
+	public String settleUpRequest(String email) {
+		// TODO Auto-generated method stub
+		
+		Optional<Splitwise> email1 = userRepository.findByEmail(email);
+		
+		return null;
+	}
+
+	@Override
+	public Optional<Groups> findByGroupId(Long groupId) {
+		// TODO Auto-generated method stub
+		var group = groupRepository.findByGroupId(groupId);
+		return group;
 	}
 
 	

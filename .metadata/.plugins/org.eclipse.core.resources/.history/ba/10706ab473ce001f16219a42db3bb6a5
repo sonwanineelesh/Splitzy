@@ -1,5 +1,0 @@
-package com.splitwise.service;
-
-public interface ExpenseService {
-
-}

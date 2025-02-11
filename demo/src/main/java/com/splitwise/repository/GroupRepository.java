@@ -9,6 +9,8 @@ import com.splitwise.entity.Groups;
 public interface GroupRepository extends CrudRepository<Groups, Long>{
 
 	Optional<Groups> findByGroupName(String groupName);
+
+	Optional<Groups> findByGroupId(Long groupId);
 	
 
 }

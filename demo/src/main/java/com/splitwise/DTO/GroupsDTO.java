@@ -3,7 +3,7 @@ package com.splitwise.DTO;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.splitwise.entity.User;
+import com.splitwise.entity.Splitwise;
 
 public class GroupsDTO {
 	

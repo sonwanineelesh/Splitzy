@@ -5,11 +5,11 @@ import java.util.Set;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.splitwise.entity.User;
+import com.splitwise.entity.Splitwise;
 
-public interface UserRepository extends CrudRepository<User, Long>{
+public interface UserRepository extends CrudRepository<Splitwise, Long>{
 
-	Optional<User> findByEmail(String email);
+	Optional<Splitwise> findByEmail(String email);
 
 //	Set<User> findByPayerEmail(String payerEmail);
 

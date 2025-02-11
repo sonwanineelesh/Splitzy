@@ -1,12 +1,18 @@
 package com.splitwise.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import com.splitwise.DTO.AuthenticationResponse;
 import com.splitwise.DTO.UserDTO;
-import com.splitwise.entity.User;
+import com.splitwise.entity.Splitwise;
 import com.splitwise.repository.UserRepository;
+import com.splitwise.utility.JWTUtitlity;
 
 import jakarta.transaction.Transactional;
 
@@ -19,7 +25,10 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserRepository userRepository;
 	
-	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+//	@Autowired
+	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 	@Override
 	public String register(UserDTO userDTO) {
 		// TODO Auto-generated method stub
@@ -28,17 +37,47 @@ public class UserServiceImpl implements UserService{
 		boolean isUsernameNotAvailable = userRepository.findById(userDTO.getUserId()).isEmpty();
 		// check whether specified phone no. is already in use by other customer
 		if (isUsernameNotAvailable) { 
-				User user = new User();
+				Splitwise splitwise = new Splitwise();
 				
 //				user.setUserId(userDTO.getUserId());
-				user.setEmail(userDTO.getEmail());
-				user.setUsername(userDTO.getUsername());
-				user.setPassword(userDTO.getPassword());
+				splitwise.setEmail(userDTO.getEmail());
+				splitwise.setUsername(userDTO.getUsername());
+				splitwise.setPassword(encoder.encode(userDTO.getPassword()));
+				System.out.println(encoder.encode(userDTO.getPassword()));
+				userRepository.save(splitwise);
 				System.out.println("mmmmmmmmmmmmmmmmmmm");
-				userRepository.save(user);
-				System.out.println("mmmmmmmmmmmmmmmmmmm");
-				registeredWithUsername = user.getUsername();
+				registeredWithUsername = splitwise.getUsername();
 			} 
 		return registeredWithUsername;
 	}
+	
+	@Autowired
+	private JWTUtitlity jwtUtitlity;
+	
+	@Override
+	public ResponseEntity<?> authenticate(UserDTO loginRequest) {
+		// TODO Auto-generated method stub
+		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+		var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+		String jwtToken = jwtUtitlity.generateJwtToken(user.getUsername());
+		
+		AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+//		return ResponseEntity<String>();
+		authenticationResponse.setToken(jwtToken);
+		return ResponseEntity.ok(authenticationResponse);
+	}
+	
+//	 private final Map<String, String> users = new HashMap<>();
+//	private AuthenticationManager authenticationManager;
+
+//	    public UserServiceImpl() {
+//	        // Simulating a user repository with username/password
+//	        users.put("user", new BCryptPasswordEncoder().encode("password")); // username: user, password: password
+//	    }
+
+	    
+//	    catch (AuthenticationException e) {
+//	            throw new RuntimeException("Invalid credentials");
+//	        }
+	    
 }

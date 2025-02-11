@@ -34,7 +34,7 @@ public class Groups {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
         )
-    private Set<User> groupMembers = new HashSet<>();
+    private Set<Splitwise> groupMembers = new HashSet<>();
 
 	public Long getGroupId() {
 		return groupId;
@@ -60,11 +60,11 @@ public class Groups {
 		this.groupName = groupName;
 	}
 
-	public Set<User> getGroupMembers() {
+	public Set<Splitwise> getGroupMembers() {
 		return groupMembers;
 	}
 
-	public void setGroupMembers(Set<User> groupMembers) {
+	public void setGroupMembers(Set<Splitwise> groupMembers) {
 		this.groupMembers = groupMembers;
 	}
 
