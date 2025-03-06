@@ -1,7 +1,7 @@
 # Use an official Maven image to build the project
 FROM maven:3.8.7-eclipse-temurin-17 AS build
 
-WORKDIR /app
+WORKDIR /demo
 
 # Copy project files
 COPY . .
