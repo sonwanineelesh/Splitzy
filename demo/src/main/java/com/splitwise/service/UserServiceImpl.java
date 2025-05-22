@@ -1,9 +1,14 @@
 package com.splitwise.service;
 
+import java.util.ArrayList;
+
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -25,10 +30,17 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserRepository userRepository;
 	
-	@Autowired
-	private AuthenticationManager authenticationManager;
+	// @Autowired
+	// private AuthenticationManager authenticationManager;
 //	@Autowired
 	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+ private final ObjectProvider<AuthenticationManager> authenticationManager;
+
+    public UserServiceImpl(ObjectProvider<AuthenticationManager> authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
 	@Override
 	public String register(UserDTO userDTO) {
 		// TODO Auto-generated method stub
@@ -57,9 +69,9 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public ResponseEntity<?> authenticate(UserDTO loginRequest) {
 		// TODO Auto-generated method stub
-		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+		authenticationManager.getObject().authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 		var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
-		String jwtToken = jwtUtitlity.generateJwtToken(user.getUsername());
+		String jwtToken = jwtUtitlity.generateJwtToken(user.getEmail());// changed
 		
 		AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 //		return ResponseEntity<String>();
@@ -67,6 +79,15 @@ public class UserServiceImpl implements UserService{
 		return ResponseEntity.ok(authenticationResponse);
 	}
 	
+	@Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Splitwise user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        // Convert your Splitwise user to Spring Security's UserDetails object
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(), user.getPassword(), new ArrayList<>()); // Empty authorities list
+    }
 //	 private final Map<String, String> users = new HashMap<>();
 //	private AuthenticationManager authenticationManager;
 

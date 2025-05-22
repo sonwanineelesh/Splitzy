@@ -45,7 +45,7 @@ public class SplitwiseAPI {
 	public ResponseEntity<String> register(@RequestBody UserDTO userDto) {
 		//TODO: process POST request
 		String username = userService.register(userDto);
-		if(username.equals(userDto.getUsername())) {
+		if(username.equals(userDto.getEmail())) {
 			System.out.println("Already exists");
 		}
 		return new ResponseEntity<>(username,HttpStatus.OK);
