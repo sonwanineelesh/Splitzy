@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +31,9 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+    private JavaMailSender mailSender;
 	
 	// @Autowired
 	// private AuthenticationManager authenticationManager;
@@ -88,17 +93,30 @@ public class UserServiceImpl implements UserService{
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(), new ArrayList<>()); // Empty authorities list
     }
-//	 private final Map<String, String> users = new HashMap<>();
-//	private AuthenticationManager authenticationManager;
 
-//	    public UserServiceImpl() {
-//	        // Simulating a user repository with username/password
-//	        users.put("user", new BCryptPasswordEncoder().encode("password")); // username: user, password: password
-//	    }
+	@Override
+	public Long getYouOwed(String email) {
+		// TODO Auto-generated method stub
 
-	    
-//	    catch (AuthenticationException e) {
-//	            throw new RuntimeException("Invalid credentials");
-//	        }
-	    
+		Splitwise user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));	
+		
+			return user.getBalance();
+	}
+
+	@Override
+	public void sendPasswordResetEmail(String email, String token) {
+		// TODO Auto-generated method stub
+		String resetUrl = "https://localhost:8080/reset-password?token=" + token;
+        String subject = "Reset Your Password";
+        String body = "Click the link to reset your password:\n" + resetUrl;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject(subject);
+        message.setText(body);
+        message.setFrom("your_email@example.com"); // Or from your SMTP config
+
+        mailSender.send(message);
+	}
 }

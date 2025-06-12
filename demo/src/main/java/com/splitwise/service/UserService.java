@@ -12,4 +12,8 @@ public interface UserService extends UserDetailsService {
 //	public UserDetails loadUserByUsername(UserDTO userDTO);
 public UserDetails loadUserByUsername(String email);
 	ResponseEntity<?> authenticate(UserDTO loginRequest);
+    // Long getBalanceForUser(String userEmail);
+    Long getYouOwed(String userEmail);
+    // Long getYouAreOwed(String userEmail);
+    void sendPasswordResetEmail(String email, String token);
 	}

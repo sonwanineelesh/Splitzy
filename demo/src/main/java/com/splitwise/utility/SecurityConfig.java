@@ -74,10 +74,10 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register").permitAll()
+                .requestMatchers("/login", "/register","/balance","/forgot-password/{email}","/reset-password").permitAll()
                 .anyRequest().authenticated() // 🔐 All other routes require valid token
             ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) 
             .and()
             .exceptionHandling().authenticationEntryPoint((req, res, ex) ->
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
