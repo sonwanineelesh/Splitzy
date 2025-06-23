@@ -1,5 +1,6 @@
 package com.splitwise.api;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +30,8 @@ import com.splitwise.service.TokenService;
 import com.splitwise.service.UserService;
 import com.splitwise.utility.JWTUtitlity;
 //import com.splitwise.utility.JWTUtitlity;
+
+import jakarta.mail.MessagingException;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -91,10 +94,11 @@ public class SplitwiseAPI {
 	    }
 
 		@PostMapping("/forgot-password/{email}")
-public ResponseEntity<String> forgotPassword(@PathVariable("email") String email) {
+public ResponseEntity<String> forgotPassword(@PathVariable("email") String email) throws UnsupportedEncodingException, MessagingException {
 	System.out.println("#################################");
 	
-    String token = tokenService.forgotPassword(email);
+    ResponseEntity<String> token = tokenService.forgotPassword(email);
+	
     return ResponseEntity.ok("Password reset email sent."+"**"+token);
 }
 
